@@ -1,267 +1,429 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil - Rose</title>
-    <style>
-        :root {
-            --gold: #c5a059;
-            --bg-dark: #0a0e14;
-            --blue-neon: #00d2ff;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
+<style>
+    /* --- CONFIGURAÇÕES DE FUNDO --- */
+    body, #xat_user_id {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        color: white;
+        overflow-x: hidden;
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Georgia', serif; }
-        body { background: var(--bg-dark); color: white; overflow: hidden; height: 100vh; }
+    .bg-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image: url('https://i.imgur.com/UB2QLtd.gif');
+        background-size: cover;
+        background-position: center;
+        z-index: -2;
+    }
 
-        /* ESTRELAS GRANDES E NÍTIDAS */
-        #stars-container { position: fixed; width: 100%; height: 100%; z-index: 1; overflow: hidden; pointer-events: none; }
-        .star { position: absolute; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(110vh); } }
+    /* --- TELA DE ENTRADA (LANDING PAGE) --- */
+    #landing-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: opacity 1s ease, visibility 1s;
+        background: rgba(0,0,0,0.2);
+    }
 
-        /* TELA ENTRADA */
-        #landing-page {
-            position: relative; z-index: 100; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            background: var(--bg-dark); transition: 1s ease;
-        }
-        .btn-entrar {
-            width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--blue-neon);
-            background: radial-gradient(circle, rgba(0, 210, 255, 0.2), transparent);
-            color: white; font-weight: bold; cursor: pointer;
-            box-shadow: 0 0 20px var(--blue-neon); animation: pulse 2s infinite;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-        }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); } 70% { box-shadow: 0 0 0 25px rgba(0, 210, 255, 0); } }
+    .enter-btn {
+        padding: 18px 50px;
+        font-size: 22px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        background: linear-gradient(270deg, #d4af37, #ffdf7e, #8a6d3b, #d4af37);
+        background-size: 600% 600%;
+        animation: textGradient 4s ease infinite;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        transition: transform 0.3s ease;
+    }
 
-        /* PERFIL */
-        #profile-page {
-            position: relative; z-index: 10; height: 100vh;
-            display: none; opacity: 0; justify-content: center; align-items: center;
-            transition: 1s ease;
-        }
-        .card {
-            width: 950px; min-height: 600px; background: rgba(15, 20, 30, 0.95);
-            border: 1px solid var(--glass); border-radius: 15px; padding: 30px;
-            position: relative; box-shadow: 0 0 60px black; text-align: center;
-        }
+    .enter-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+    }
 
-        .avatar {
-            width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--gold);
-            margin: 0 auto 15px; padding: 4px; background: rgba(197, 160, 89, 0.1); overflow: hidden;
-        }
-        .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    /* --- ESTRUTURA PRINCIPAL --- */
+    .main-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.8), 0 0 15px rgba(212, 175, 55, 0.2);
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1.5s ease, transform 1.5s ease;
+    }
 
-        nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .nav-btn {
-            background: var(--glass); border: 1px solid var(--gold); color: white;
-            padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 11px;
-            transition: 0.3s; text-transform: uppercase;
-        }
-        .nav-btn:hover, .nav-btn.active { background: var(--gold); color: black; font-weight: bold; }
+    .main-wrapper.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-        /* SEÇÕES */
-        .content-section { display: none; min-height: 250px; animation: fadeIn 0.6s ease forwards; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* --- CABEÇALHO UNIFICADO --- */
+    .header-banner {
+        height: 250px; /* Aumentado para acomodar os novos elementos */
+        position: relative;
+        border-bottom: 2px solid #d4af37;
+        display: flex;
+        flex-direction: column; /* Organiza avatar e texto verticalmente */
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        padding-top: 20px; /* Espaço no topo */
+    }
 
-        /* BANNER GRADIENTE ANIMADO */
-        .banner-welcome {
-            background: linear-gradient(-45deg, var(--gold), #fff, var(--blue-neon), var(--gold));
-            background-size: 400% 400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 32px;
-            font-weight: bold;
-            margin-top: 40px;
-            animation: gradientText 5s ease infinite;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+    @keyframes textGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
 
-        @keyframes gradientText {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    /* Container para os textos Nome e ID */
+    .header-text-container {
+        text-align: center;
+        width: 100%;
+        margin-top: 10px; /* Espaço após o avatar */
+    }
 
-        /* GALERIA AMPLIADA COM ZOOM */
-        .slider { width: 600px; height: 350px; overflow: hidden; position: relative; margin: 0 auto; border-radius: 10px; border: 2px solid var(--gold); cursor: zoom-in; }
-        .slide-track { display: flex; transition: 0.8s ease; width: 300%; height: 100%; }
-        .slide-track img { width: 600px; height: 350px; object-fit: cover; }
+    .header-text {
+        font-size: 60px; /* Ligeiramente menor para caber melhor */
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -1px;
+        line-height: 1;
+        background: linear-gradient(270deg, #d4af37, #ffdf7e, #1a1a1a, #d4af37);
+        background-size: 600% 600%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: textGradient 6s ease infinite;
+        text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        display: block; /* Garante que ocupe a linha toda */
+    }
 
-        /* ZOOM MODAL (LIGHTBOX) */
-        #zoom-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center;
-        }
-        #zoom-modal img { max-width: 90%; max-height: 90%; border: 3px solid var(--gold); border-radius: 10px; }
+    .header-id {
+        font-size: 24px; /* Letras menores */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        line-height: 1.2;
+        background: linear-gradient(270deg, #d4af37, #ffdf7e, #1a1a1a, #d4af37);
+        background-size: 600% 600%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: textGradient 6s ease infinite;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        display: block; /* Garante que fique abaixo do nome */
+        margin-top: 5px;
+    }
 
-        /* PLAYER MODAL */
-        #music-modal {
-            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 320px; background: rgba(10, 14, 20, 0.98); border: 1px solid var(--gold);
-            padding: 20px; border-radius: 15px; z-index: 1000; box-shadow: 0 0 40px #000;
-        }
-        .playlist-list { list-style: none; text-align: left; font-size: 10px; margin-top: 15px; max-height: 150px; overflow-y: auto; }
-        .playlist-list li { padding: 8px; border-bottom: 1px solid rgba(197, 160, 89, 0.1); cursor: pointer; display: flex; justify-content: space-between; }
-        .active-song { color: var(--gold); background: rgba(197, 160, 89, 0.1); font-weight: bold; }
+    /* --- ANIMAÇÕES DA FOTO DE PERFIL --- */
+    @keyframes floatAvatar {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
 
-    </style>
-</head>
-<body>
+    @keyframes glowAvatar {
+        0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); border-color: #d4af37; }
+        50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.8); border-color: #ffdf7e; }
+        100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); border-color: #d4af37; }
+    }
 
-    <div id="stars-container"></div>
-    <audio id="main-audio"></audio>
+    .avatar-box {
+        position: relative; /* Mudado de absolute para relative para flutuar dentro */
+        text-align: center;
+        animation: floatAvatar 4s ease-in-out infinite; 
+        margin-bottom: 10px; /* Espaço antes do texto */
+        z-index: 10; /* Garante que fique acima de outros efeitos se houver */
+    }
 
-    <div id="landing-page">
-        <button class="btn-entrar" onclick="abrirPerfil()">ENTRAR</button>
-    </div>
+    .avatar-img {
+        width: 120px; /* Ligeiramente menor para equilibrar com o texto */
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid #d4af37;
+        background: url('https://i.imgur.com/YDKnxJi.jpeg') center/cover;
+        animation: glowAvatar 3s infinite; 
+        margin: 0 auto; /* Centraliza horizontalmente */
+    }
 
-    <div id="profile-page">
-        <div class="card">
-            <h2 style="color:var(--gold); letter-spacing: 4px; margin-bottom: 10px;">PERFIL PROFISSIONAL</h2>
-            <div class="avatar"><img src="https://i.imgur.com/Z8OtVir.jpeg"></div>
+    /* --- CONTEÚDO --- */
+    .profile-content {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 25px;
+        padding: 40px; /* Ajustado o padding superior pois o avatar subiu */
+    }
 
-            <nav>
-                <button class="nav-btn active" onclick="tab('inicio', this)">Início</button>
-                <button class="nav-btn" onclick="tab('galeria', this)">Galeria</button>
-                <button class="nav-btn" onclick="tab('sobre', this)">Sobre Mim</button>
-                <button class="nav-btn" onclick="tab('perfil', this)">Perfil</button>
-                <button class="nav-btn" onclick="togglePlayer()" style="color:var(--blue-neon); border-color:var(--blue-neon)">Música ♫</button>
-            </nav>
+    .card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
 
-            <div id="inicio" class="content-section active">
-                <h1 class="banner-welcome">Bem vindos ao meu Xatspace</h1>
-                <p style="margin-top: 20px; font-size: 18px; color: var(--gold); letter-spacing: 1px;">Gabriel</p>
-                <p style="opacity: 0.6; font-size: 14px;">Design e Inovação</p>
-            </div>
+    .card h3 {
+        margin-top: 0;
+        color: #d4af37;
+        border-left: 4px solid #d4af37;
+        padding-left: 10px;
+        font-size: 18px;
+    }
 
-            <div id="galeria" class="content-section">
-                <div class="slider" onclick="abrirZoom()">
-                    <div class="slide-track" id="track">
-                        <img src="https://i.imgur.com/Z8OtVir.jpeg" id="img1">
-                        <img src="https://i.imgur.com/Z8OtVir.jpeg" id="img2" style="filter: brightness(0.7)">
-                        <img src="https://i.imgur.com/Z8OtVir.jpeg" id="img3" style="filter: sepia(0.4)">
-                    </div>
-                </div>
-                <p style="font-size: 10px; color:var(--gold); margin-top: 10px;">Clique na foto para dar zoom</p>
-            </div>
+    /* --- ABAS E BOTÕES --- */
+    .nav-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
 
-            <div id="sobre" class="content-section">
-                <p style="margin-top: 60px; font-style: italic; padding: 0 80px;">"BUSCANDO CRESCIMENTO, CONHECIMENTO E IMPACTO POSITIVO. CADA DESAFIO É UMA OPORTUNIDADE DE APRENDIZADO."</p>
-            </div>
+    .tab-btn {
+        background: transparent;
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
 
-            <div id="perfil" class="content-section">
-                <div style="margin-top: 60px; display: inline-block; text-align: left; border-left: 2px solid var(--gold); padding-left: 20px;">
-                    <p><strong>IDADE:</strong> 21 Anos</p>
-                    <p><strong>SIGNO:</strong> Peixes ♓</p>
-                    <p><strong>PAÍS:</strong> Brasil 🇧🇷</p>
-                </div>
-            </div>
+    .tab-btn:hover { background: rgba(212, 175, 55, 0.2); }
 
-            <div id="music-modal">
-                <div style="display:flex; justify-content:space-between; color:var(--gold); font-size: 12px; border-bottom:1px solid var(--gold); padding-bottom:5px;">
-                    <span>PLAYER PREMIUM</span>
-                    <span style="cursor:pointer" onclick="togglePlayer()">✕</span>
-                </div>
-                <div style="margin: 15px 0; font-size: 12px;" id="track-name">Carregando...</div>
-                <div style="display:flex; justify-content:center; gap:15px;">
-                    <button class="nav-btn" onclick="prev()">◀</button>
-                    <button class="nav-btn" onclick="playPause()" id="btnP">⏸</button>
-                    <button class="nav-btn" onclick="next()">▶</button>
-                </div>
-                <ul class="playlist-list" id="playlist-ui"></ul>
-            </div>
+    .content-pane { display: none; }
+    .active-pane { display: block; animation: fadeIn 0.4s ease; }
+
+    /* --- GALERIA GRID --- */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .gal-thumb {
+        width: 100%;
+        height: 80px;
+        border-radius: 6px;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid #444;
+        cursor: zoom-in;
+        transition: 0.3s;
+    }
+    .gal-thumb:hover { border-color: #d4af37; transform: scale(1.05); }
+
+    /* --- PLAYER --- */
+    #player-section {
+        display: none; 
+        background: #000;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #d4af37;
+        text-align: center;
+    }
+
+    .vol-btn {
+        background: #d4af37;
+        border: none;
+        color: black;
+        padding: 4px 10px;
+        margin: 2px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+
+    /* --- ZOOM & SEGURANÇA --- */
+    #zoom-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9); display: none;
+        justify-content: center; align-items: center; z-index: 5000;
+        cursor: zoom-out; backdrop-filter: blur(8px);
+    }
+    #zoom-img {
+        max-width: 90%; max-height: 85%; border: 3px solid #d4af37;
+        border-radius: 10px; transform: scale(0.8); transition: 0.3s;
+    }
+    #zoom-overlay.active #zoom-img { transform: scale(1); }
+
+    #sec-msg {
+        position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+        background: #d4af37; color: black; padding: 12px 30px;
+        font-weight: bold; border-radius: 8px 8px 0 0; transition: 0.4s; z-index: 6000;
+    }
+    .show-sec { bottom: 0 !important; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<div class="bg-glow"></div>
+
+<div id="landing-page">
+    <button class="enter-btn" onclick="startExperience()">Entrar</button>
+</div>
+
+<div class="main-wrapper" id="main-content">
+    <div class="header-banner">
+        <div class="avatar-box">
+            <div class="avatar-img"></div>
+        </div>
+        <div class="header-text-container">
+            <span class="header-text">Rose</span>
+            <span class="header-id">ID: 1553911066</span>
         </div>
     </div>
 
-    <div id="zoom-modal" onclick="fecharZoom()">
-        <img id="img-zoomed" src="">
+    <div class="profile-content">
+        <div class="left-side">
+            <div class="nav-tabs">
+                <button class="tab-btn" onclick="openTab('tab-inicio')">Início</button>
+                <button class="tab-btn" onclick="openTab('tab-perfil')">Perfil</button>
+                <button class="tab-btn" onclick="openTab('tab-galeria')">Galería</button>
+                <button class="tab-btn" onclick="toggleMusic()">Player</button>
+            </div>
+
+            <div id="tab-inicio" class="content-pane active-pane">
+                <div class="card">
+                    <h3>Sobre o Projeto</h3>
+                    <p>Bem-vindo ao centro de tecnologia MultiTech. Especialista em hardware e design digital.</p>
+                </div>
+            </div>
+
+            <div id="tab-perfil" class="content-pane">
+                <div class="card">
+                    <h3>Dados Pessoais</h3>
+                    <p><b>🌍 País:</b> Brasil | <b>🎂 Idade:</b> 20 Anos</p>
+                    <p><b>🗣️ Idioma:</b> Português - Espanhol | <b>📅 Ano:</b> 2026</p>
+                    <p><b>♈ Signo:</b> Áries</p>
+                </div>
+            </div>
+
+            <div id="tab-galeria" class="content-pane">
+                <div class="card">
+                    <h3>Minha Galeria</h3>
+                    <div class="gallery-grid">
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/LSZOs8Q.jpeg')" onclick="zoom('https://i.imgur.com/LSZOs8Q.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/BGULIuI.jpeg')" onclick="zoom('https://i.imgur.com/BGULIuI.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/HCn75BA.jpeg')" onclick="zoom('https://i.imgur.com/HCn75BA.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/QvXRzEF.jpeg')" onclick="zoom('https://i.imgur.com/QvXRzEF.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/0h6IQIZ.jpeg')" onclick="zoom('https://i.imgur.com/0h6IQIZ.jpeg')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-side">
+            <div id="player-section">
+                <h3 style="color:#d4af37; font-size: 14px; margin-bottom: 10px;">Music Player</h3>
+                <marquee id="track-title" style="font-size: 11px; color: #aaa;">Carregando...</marquee>
+                <audio id="player-core"></audio>
+                <div style="margin-top:10px;">
+                    <span style="font-size:10px">VOL:</span>
+                    <button class="vol-btn" onclick="setV(0)">0%</button>
+                    <button class="vol-btn" onclick="setV(0.5)">50%</button>
+                    <button class="vol-btn" onclick="setV(1)">100%</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:20px; text-align:center; font-size:11px; color:#555;">
+                MULTITECH SECURITY <br> © 2026
+            </div>
+        </div>
     </div>
+</div>
 
-    <script>
-        const playlist = [
-            { name: "Abraham-Mateo - BAI LALA", url: "https://www.dropbox.com/scl/fi/gw8940zfvm60ul7malxox/Abraham-Mateo-BAI-LALA.mp3?rlkey=puytwnkxllb6tmz35htfr8tmh&st=ud55ktgf&raw=1" },
-            { name: "Alex Warren - Ordinary", url: "https://www.dropbox.com/scl/fi/lpcx92wv63wzcm6z56l7q/Alex-Warren-Ordinary.mp3?rlkey=pdxjo778t66ecrja08pfyij6k&st=zb53k17t&raw=1" },
-            { name: "Eminem - You dont know", url: "https://www.dropbox.com/scl/fi/4y0lc0fi24e9yavn17psv/Eminem-you-dont-know.mp3.mp3?rlkey=zicb6spgqe3pv0gqnz3xc24zo&st=wy1w0icm&raw=1" },
-            { name: "The Sound of Silence", url: "https://www.dropbox.com/scl/fi/2y9zhx5zjsdxg3zljc2f9/sound-of-silence.mp3.mp3?rlkey=88zg0td3loy40uxmcm9rnk1jt&st=qty8093e&raw=1" },
-            { name: "Desireless - Voyage Voyage", url: "https://www.dropbox.com/scl/fi/cqqhzkv1ll1p09z7qgylp/Desireless-voyage-voyage.mp3.mp3?rlkey=hscvkehw7n7vvgi2im4rwhom7&st=2ldonj76&raw=1" }
-        ];
+<div id="zoom-overlay" onclick="closeZ()"><img id="zoom-img" src=""></div>
+<div id="sec-msg">Copyright - Acesso Proibido</div>
 
-        let songIdx = 0;
-        const audio = document.getElementById('main-audio');
-
-        function loadSong() {
-            audio.src = playlist[songIdx].url;
-            document.getElementById('track-name').innerText = playlist[songIdx].name;
-            updateUI();
-        }
-
-        function playSong() { audio.play(); document.getElementById('btnP').innerText = '⏸'; }
-        function playPause() { if(audio.paused) playSong(); else { audio.pause(); document.getElementById('btnP').innerText = '▶'; } }
-        function next() { songIdx = (songIdx + 1) % playlist.length; loadSong(); playSong(); }
-        function prev() { songIdx = (songIdx - 1 + playlist.length) % playlist.length; loadSong(); playSong(); }
+<script>
+    /* --- LOGICA DE TRANSIÇÃO --- */
+    function startExperience() {
+        const lp = document.getElementById('landing-page');
+        const main = document.getElementById('main-content');
         
-        audio.onended = () => { next(); };
+        lp.style.opacity = '0';
+        lp.style.visibility = 'hidden';
+        
+        main.classList.add('visible');
+        
+        // Inicia a música automaticamente
+        if(!aud.src) loadM(0);
+        document.getElementById('player-section').style.display = "block";
+    }
 
-        function updateUI() {
-            const ui = document.getElementById('playlist-ui'); ui.innerHTML = '';
-            playlist.forEach((s, i) => {
-                const li = document.createElement('li');
-                li.innerHTML = `<span>${s.name}</span>`;
-                if(i === songIdx) li.className = 'active-song';
-                li.onclick = () => { songIdx = i; loadSong(); playSong(); };
-                ui.appendChild(li);
-            });
+    function openTab(id) {
+        document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active-pane'));
+        document.getElementById(id).classList.add('active-pane');
+    }
+
+    function zoom(url) {
+        const o = document.getElementById('zoom-overlay');
+        const i = document.getElementById('zoom-img');
+        i.src = url; o.style.display = 'flex';
+        setTimeout(() => o.classList.add('active'), 10);
+    }
+    function closeZ() {
+        const o = document.getElementById('zoom-overlay');
+        o.classList.remove('active');
+        setTimeout(() => o.style.display = 'none', 300);
+    }
+
+    const playlist = [
+        { n: "Abraham-Mateo - BAI LALA", u: "https://www.dropbox.com/scl/fi/gw8940zfvm60ul7malxox/Abraham-Mateo-BAI-LALA.mp3?rlkey=puytwnkxllb6tmz35htfr8tmh&st=ud55ktgf&raw=1" },
+        { n: "Alex Warren - Ordinary", u: "https://www.dropbox.com/scl/fi/lpcx92wv63wzcm6z56l7q/Alex-Warren-Ordinary.mp3?rlkey=pdxjo778t66ecrja08pfyij6k&st=zb53k17t&raw=1" },
+        { n: "Eminem - You dont know", u: "https://www.dropbox.com/scl/fi/4y0lc0fi24e9yavn17psv/Eminem-you-dont-know.mp3.mp3?rlkey=zicb6spgqe3pv0gqnz3xc24zo&st=wy1w0icm&raw=1" },
+        { n: "The Sound of Silence", u: "https://www.dropbox.com/scl/fi/2y9zhx5zjsdxg3zljc2f9/sound-of-silence.mp3.mp3?rlkey=88zg0td3loy40uxmcm9rnk1jt&st=qty8093e&raw=1" },
+        { n: "Desireless - Voyage Voyage", u: "https://www.dropbox.com/scl/fi/cqqhzkv1ll1p09z7qgylp/Desireless-voyage-voyage.mp3.mp3?rlkey=hscvkehw7n7vvgi2im4rwhom7&st=2ldonj76&raw=1" }
+    ];
+    let curr = 0;
+    const aud = document.getElementById('player-core');
+    const tit = document.getElementById('track-title');
+
+    function loadM(i) {
+        aud.src = playlist[i].u;
+        tit.innerText = "Tocando: " + playlist[i].n;
+        aud.play();
+    }
+    aud.onended = () => { curr = (curr + 1) % playlist.length; loadM(curr); };
+    function setV(v) { aud.volume = v; }
+    function toggleMusic() {
+        const s = document.getElementById('player-section');
+        if(s.style.display === "block") { s.style.display = "none"; }
+        else { s.style.display = "block"; if(!aud.src) loadM(0); }
+    }
+
+    function sAlert() {
+        const a = document.getElementById('sec-msg');
+        a.classList.add('show-sec');
+        setTimeout(() => a.classList.remove('show-sec'), 2000);
+    }
+    document.addEventListener('contextmenu', e => { e.preventDefault(); sAlert(); });
+    document.addEventListener('keydown', e => {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
+            e.preventDefault(); sAlert();
         }
-
-        const stars = document.getElementById('stars-container');
-        for(let i=0; i<45; i++) {
-            const s = document.createElement('div');
-            s.className = 'star';
-            const size = Math.random()*5 + 3 + 'px';
-            s.style.width = size; s.style.height = size;
-            s.style.left = Math.random()*100 + 'vw';
-            s.style.top = '-10vh';
-            s.style.animationDuration = Math.random()*4 + 3 + 's';
-            s.style.animationDelay = Math.random()*5 + 's';
-            stars.appendChild(s);
-        }
-
-        function abrirPerfil() {
-            document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('profile-page').style.display = 'flex';
-            setTimeout(() => document.getElementById('profile-page').style.opacity = '1', 50);
-            loadSong(); playSong();
-        }
-
-        function tab(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); btn.classList.add('active');
-        }
-
-        function togglePlayer() {
-            const m = document.getElementById('music-modal');
-            m.style.display = m.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function abrirZoom() {
-            const modal = document.getElementById('zoom-modal');
-            const img = document.getElementById('img-zoomed');
-            img.src = "https://i.imgur.com/Z8OtVir.jpeg";
-            modal.style.display = 'flex';
-        }
-        function fecharZoom() { document.getElementById('zoom-modal').style.display = 'none'; }
-
-        let slideIdx = 0;
-        setInterval(() => {
-            slideIdx = (slideIdx + 1) % 3;
-            const track = document.getElementById('track');
-            if(track) track.style.transform = `translateX(-${slideIdx * 600}px)`;
-        }, 4000);
-    </script>
-</body>
-</html>
+    });
+    document.addEventListener('selectstart', e => e.preventDefault());
+    document.addEventListener('dragstart', e => e.preventDefault());
+</script>
