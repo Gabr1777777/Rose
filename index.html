@@ -79,15 +79,15 @@
 
     /* --- CABEÇALHO UNIFICADO --- */
     .header-banner {
-        height: 250px; /* Aumentado para acomodar os novos elementos */
+        height: 250px;
         position: relative;
         border-bottom: 2px solid #8a2be2;
         display: flex;
-        flex-direction: column; /* Organiza avatar e texto verticalmente */
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         overflow: hidden;
-        padding-top: 20px; /* Espaço no topo */
+        padding-top: 20px;
     }
 
     @keyframes textGradient {
@@ -100,11 +100,11 @@
     .header-text-container {
         text-align: center;
         width: 100%;
-        margin-top: 10px; /* Espaço após o avatar */
+        margin-top: 10px;
     }
 
     .header-text {
-        font-size: 60px; /* Ligeiramente menor para caber melhor */
+        font-size: 60px;
         font-weight: 900;
         text-transform: uppercase;
         letter-spacing: -1px;
@@ -115,11 +115,11 @@
         -webkit-text-fill-color: transparent;
         animation: textGradient 6s ease infinite;
         text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
-        display: block; /* Garante que ocupe a linha toda */
+        display: block;
     }
 
     .header-id {
-        font-size: 24px; /* Letras menores */
+        font-size: 24px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 2px;
@@ -130,7 +130,7 @@
         -webkit-text-fill-color: transparent;
         animation: textGradient 6s ease infinite;
         text-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
-        display: block; /* Garante que fique abaixo do nome */
+        display: block;
         margin-top: 5px;
     }
 
@@ -148,21 +148,21 @@
     }
 
     .avatar-box {
-        position: relative; /* Mudado de absolute para relative para flutuar dentro */
+        position: relative;
         text-align: center;
         animation: floatAvatar 4s ease-in-out infinite; 
-        margin-bottom: 10px; /* Espaço antes do texto */
-        z-index: 10; /* Garante que fique acima de outros efeitos se houver */
+        margin-bottom: 10px;
+        z-index: 10;
     }
 
     .avatar-img {
-        width: 120px; /* Ligeiramente menor para equilibrar com o texto */
+        width: 120px;
         height: 120px;
         border-radius: 50%;
         border: 4px solid #8a2be2;
         background: url('https://i.imgur.com/YDKnxJi.jpeg') center/cover;
         animation: glowAvatar 3s infinite; 
-        margin: 0 auto; /* Centraliza horizontalmente */
+        margin: 0 auto;
     }
 
     /* --- CONTEÚDO --- */
@@ -170,7 +170,7 @@
         display: grid;
         grid-template-columns: 1fr 320px;
         gap: 25px;
-        padding: 40px; /* Ajustado o padding superior pois o avatar subiu */
+        padding: 40px;
     }
 
     .card {
@@ -275,6 +275,22 @@
     .show-sec { bottom: 0 !important; }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* --- EFEITO DA MÁQUINA DE ESCREVER (NOVO) --- */
+    .typing-effect {
+        border-right: 2px solid #ba55d3;
+        white-space: nowrap;
+        display: inline-block;
+        animation: blink-cursor 0.75s step-end infinite;
+    }
+    @keyframes blink-cursor {
+        from, to { border-color: transparent }
+        50% { border-color: #ba55d3; }
+    }
+    .typing-finished {
+        border-right: none !important;
+        animation: none !important;
+    }
 </style>
 
 <div class="bg-glow"></div>
@@ -306,7 +322,7 @@
             <div id="tab-inicio" class="content-pane active-pane">
                 <div class="card">
                     <h3>Bienvenidos</h3>
-                    <p>Jehová es mi pastor y nada me faltará</p>
+                    <p id="typing-text" class="typing-effect"></p>
                 </div>
             </div>
 
@@ -370,6 +386,9 @@
         // Inicia a música automaticamente
         if(!aud.src) loadM(0);
         document.getElementById('player-section').style.display = "block";
+
+        // Inicia o efeito de digitação após 800ms da entrada
+        setTimeout(typeWriter, 800);
     }
 
     function openTab(id) {
@@ -413,6 +432,21 @@
         else { s.style.display = "block"; if(!aud.src) loadM(0); }
     }
 
+    /* --- LOGICA DO EFEITO DIGITANDO (NOVO) --- */
+    const textToType = "Jehová es mi pastor y nada me faltará";
+    let textIndex = 0;
+
+    function typeWriter() {
+        const element = document.getElementById('typing-text');
+        if (textIndex < textToType.length) {
+            element.innerHTML += textToType.charAt(textIndex);
+            textIndex++;
+            setTimeout(typeWriter, 90); // Velocidade da escrita (em milissegundos)
+        } else {
+            element.classList.add('typing-finished'); // Remove o cursor após terminar
+        }
+    }
+
     function sAlert() {
         const a = document.getElementById('sec-msg');
         a.classList.add('show-sec');
@@ -421,7 +455,7 @@
     document.addEventListener('contextmenu', e => { e.preventDefault(); sAlert(); });
     document.addEventListener('keydown', e => {
         if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
-            e.preventDefault(); sAlert();
+            document.preventDefault(); sAlert();
         }
     });
     document.addEventListener('selectstart', e => e.preventDefault());
