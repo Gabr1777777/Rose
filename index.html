@@ -297,31 +297,31 @@
     <div class="profile-content">
         <div class="left-side">
             <div class="nav-tabs">
-                <button class="tab-btn" onclick="openTab('tab-inicio')">Início</button>
+                <button class="tab-btn" onclick="openTab('tab-inicio')">Inicio</button>
                 <button class="tab-btn" onclick="openTab('tab-perfil')">Perfil</button>
                 <button class="tab-btn" onclick="openTab('tab-galeria')">Galería</button>
-                <button class="tab-btn" onclick="toggleMusic()">Player</button>
+                <button class="tab-btn" onclick="toggleMusic()">Reproductor</button>
             </div>
 
             <div id="tab-inicio" class="content-pane active-pane">
                 <div class="card">
-                    <h3>Sobre o Projeto</h3>
-                    <p>Bem-vindo ao centro de tecnologia MultiTech. Especialista em hardware e design digital.</p>
+                    <h3>Bienvenidos</h3>
+                    <p>Jehová es mi pastor y nada me faltará</p>
                 </div>
             </div>
 
             <div id="tab-perfil" class="content-pane">
                 <div class="card">
-                    <h3>Dados Pessoais</h3>
-                    <p><b>🌍 País:</b> Brasil | <b>🎂 Idade:</b> 20 Anos</p>
-                    <p><b>🗣️ Idioma:</b> Português - Espanhol | <b>📅 Ano:</b> 2026</p>
-                    <p><b>♈ Signo:</b> Áries</p>
+                    <h3>Datos Personales</h3>
+                    <p><b>🌍 País:</b> El Salvador | <b>🎂 Edad:</b> 20 Años</p>
+                    <p><b>🗣️ Idioma:</b> Español | <b>📅 Año:</b> 2006 </p>
+                    <p><b>♈ Signo:</b> Piscis </p>
                 </div>
             </div>
 
             <div id="tab-galeria" class="content-pane">
                 <div class="card">
-                    <h3>Minha Galeria</h3>
+                    <h3>Mi Galería</h3>
                     <div class="gallery-grid">
                         <div class="gal-thumb" style="background-image: url('https://i.imgur.com/LSZOs8Q.jpeg')" onclick="zoom('https://i.imgur.com/LSZOs8Q.jpeg')"></div>
                         <div class="gal-thumb" style="background-image: url('https://i.imgur.com/BGULIuI.jpeg')" onclick="zoom('https://i.imgur.com/BGULIuI.jpeg')"></div>
@@ -335,8 +335,8 @@
 
         <div class="right-side">
             <div id="player-section">
-                <h3 style="color:#d4af37; font-size: 14px; margin-bottom: 10px;">Music Player</h3>
-                <marquee id="track-title" style="font-size: 11px; color: #aaa;">Carregando...</marquee>
+                <h3 style="color:#d4af37; font-size: 14px; margin-bottom: 10px;">Reproductor de Música</h3>
+                <marquee id="track-title" style="font-size: 11px; color: #aaa;">Cargando...</marquee>
                 <audio id="player-core"></audio>
                 <div style="margin-top:10px;">
                     <span style="font-size:10px">VOL:</span>
@@ -354,7 +354,7 @@
 </div>
 
 <div id="zoom-overlay" onclick="closeZ()"><img id="zoom-img" src=""></div>
-<div id="sec-msg">Copyright - Acesso Proibido</div>
+<div id="sec-msg">Copyright - Acceso Prohibido</div>
 
 <script>
     /* --- LOGICA DE TRANSIÇÃO --- */
@@ -402,7 +402,7 @@
 
     function loadM(i) {
         aud.src = playlist[i].u;
-        tit.innerText = "Tocando: " + playlist[i].n;
+        tit.innerText = "Reproduciendo: " + playlist[i].n;
         aud.play();
     }
     aud.onended = () => { curr = (curr + 1) % playlist.length; loadM(curr); };
@@ -421,7 +421,7 @@
     document.addEventListener('contextmenu', e => { e.preventDefault(); sAlert(); });
     document.addEventListener('keydown', e => {
         if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
-            e.preventDefault(); sAlert();
+            document.preventDefault(); sAlert();
         }
     });
     document.addEventListener('selectstart', e => e.preventDefault());
