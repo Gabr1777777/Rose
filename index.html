@@ -161,3 +161,269 @@
         border-radius: 50%;
         border: 4px solid #8a2be2;
         background: url('https://i.imgur.com/YDKnxJi.jpeg') center/cover;
+        animation: glowAvatar 3s infinite; 
+        margin: 0 auto; /* Centraliza horizontalmente */
+    }
+
+    /* --- CONTEÚDO --- */
+    .profile-content {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 25px;
+        padding: 40px; /* Ajustado o padding superior pois o avatar subiu */
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .card h3 {
+        margin-top: 0;
+        color: #ba55d3;
+        border-left: 4px solid #8a2be2;
+        padding-left: 10px;
+        font-size: 18px;
+    }
+
+    /* --- ABAS E BOTÕES --- */
+    .nav-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: 1px solid #8a2be2;
+        color: #ba55d3;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .tab-btn:hover { background: rgba(138, 43, 226, 0.2); }
+
+    .content-pane { display: none; }
+    .active-pane { display: block; animation: fadeIn 0.4s ease; }
+
+    /* --- GALERIA GRID --- */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .gal-thumb {
+        width: 100%;
+        height: 80px;
+        border-radius: 6px;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid #444;
+        cursor: zoom-in;
+        transition: 0.3s;
+    }
+    .gal-thumb:hover { border-color: #ba55d3; transform: scale(1.05); }
+
+    /* --- PLAYER --- */
+    #player-section {
+        display: none; 
+        background: #000;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #8a2be2;
+        text-align: center;
+    }
+
+    .vol-btn {
+        background: #8a2be2;
+        border: none;
+        color: white;
+        padding: 4px 10px;
+        margin: 2px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+
+    /* --- ZOOM & SEGURANÇA --- */
+    #zoom-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9); display: none;
+        justify-content: center; align-items: center; z-index: 5000;
+        cursor: zoom-out; backdrop-filter: blur(8px);
+    }
+    #zoom-img {
+        max-width: 90%; max-height: 85%; border: 3px solid #8a2be2;
+        border-radius: 10px; transform: scale(0.8); transition: 0.3s;
+    }
+    #zoom-overlay.active #zoom-img { transform: scale(1); }
+
+    #sec-msg {
+        position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%);
+        background: #8a2be2; color: white; padding: 12px 30px;
+        font-weight: bold; border-radius: 8px 8px 0 0; transition: 0.4s; z-index: 6000;
+    }
+    .show-sec { bottom: 0 !important; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<div class="bg-glow"></div>
+
+<div id="landing-page">
+    <button class="enter-btn" onclick="startExperience()">Entrar</button>
+</div>
+
+<div class="main-wrapper" id="main-content">
+    <div class="header-banner">
+        <div class="avatar-box">
+            <div class="avatar-img"></div>
+        </div>
+        <div class="header-text-container">
+            <span class="header-text">Rose</span>
+            <span class="header-id">ID: 1553911066</span>
+        </div>
+    </div>
+
+    <div class="profile-content">
+        <div class="left-side">
+            <div class="nav-tabs">
+                <button class="tab-btn" onclick="openTab('tab-inicio')">Inicio</button>
+                <button class="tab-btn" onclick="openTab('tab-perfil')">Perfil</button>
+                <button class="tab-btn" onclick="openTab('tab-galeria')">Galería</button>
+                <button class="tab-btn" onclick="toggleMusic()">Reproductor</button>
+            </div>
+
+            <div id="tab-inicio" class="content-pane active-pane">
+                <div class="card">
+                    <h3>Bienvenidos</h3>
+                    <p>Jehová es mi pastor y nada me faltará</p>
+                </div>
+            </div>
+
+            <div id="tab-perfil" class="content-pane">
+                <div class="card">
+                    <h3>Datos Personales</h3>
+                    <p><b>🌍 País:</b> El Salvador | <b>🎂 Edad:</b> 20 Años</p>
+                    <p><b>🗣️ Idioma:</b> Español | <b>📅 Año:</b> 2006 </p>
+                    <p><b>♈ Signo:</b> Piscis </p>
+                </div>
+            </div>
+
+            <div id="tab-galeria" class="content-pane">
+                <div class="card">
+                    <h3>Mi Galería</h3>
+                    <div class="gallery-grid">
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/LSZOs8Q.jpeg')" onclick="zoom('https://i.imgur.com/LSZOs8Q.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/BGULIuI.jpeg')" onclick="zoom('https://i.imgur.com/BGULIuI.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/HCn75BA.jpeg')" onclick="zoom('https://i.imgur.com/HCn75BA.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/QvXRzEF.jpeg')" onclick="zoom('https://i.imgur.com/QvXRzEF.jpeg')"></div>
+                        <div class="gal-thumb" style="background-image: url('https://i.imgur.com/0h6IQIZ.jpeg')" onclick="zoom('https://i.imgur.com/0h6IQIZ.jpeg')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-side">
+            <div id="player-section">
+                <h3 style="color:#ba55d3; font-size: 14px; margin-bottom: 10px;">Reproductor de Música</h3>
+                <marquee id="track-title" style="font-size: 11px; color: #aaa;">Cargando...</marquee>
+                <audio id="player-core"></audio>
+                <div style="margin-top:10px;">
+                    <span style="font-size:10px">VOL:</span>
+                    <button class="vol-btn" onclick="setV(0)">0%</button>
+                    <button class="vol-btn" onclick="setV(0.5)">50%</button>
+                    <button class="vol-btn" onclick="setV(1)">100%</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:20px; text-align:center; font-size:11px; color:#555;">
+                MULTITECH SECURITY <br> © 2026
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="zoom-overlay" onclick="closeZ()"><img id="zoom-img" src=""></div>
+<div id="sec-msg">Copyright - Acceso Prohibido</div>
+
+<script>
+    /* --- LOGICA DE TRANSIÇÃO --- */
+    function startExperience() {
+        const lp = document.getElementById('landing-page');
+        const main = document.getElementById('main-content');
+        
+        lp.style.opacity = '0';
+        lp.style.visibility = 'hidden';
+        
+        main.classList.add('visible');
+        
+        // Inicia a música automaticamente
+        if(!aud.src) loadM(0);
+        document.getElementById('player-section').style.display = "block";
+    }
+
+    function openTab(id) {
+        document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active-pane'));
+        document.getElementById(id).classList.add('active-pane');
+    }
+
+    function zoom(url) {
+        const o = document.getElementById('zoom-overlay');
+        const i = document.getElementById('zoom-img');
+        i.src = url; o.style.display = 'flex';
+        setTimeout(() => o.classList.add('active'), 10);
+    }
+    function closeZ() {
+        const o = document.getElementById('zoom-overlay');
+        o.classList.remove('active');
+        setTimeout(() => o.style.display = 'none', 300);
+    }
+
+    const playlist = [
+        { n: "Abraham-Mateo - BAI LALA", u: "https://www.dropbox.com/scl/fi/gw8940zfvm60ul7malxox/Abraham-Mateo-BAI-LALA.mp3?rlkey=puytwnkxllb6tmz35htfr8tmh&st=ud55ktgf&raw=1" },
+        { n: "Alex Warren - Ordinary", u: "https://www.dropbox.com/scl/fi/lpcx92wv63wzcm6z56l7q/Alex-Warren-Ordinary.mp3?rlkey=pdxjo778t66ecrja08pfyij6k&st=zb53k17t&raw=1" },
+        { n: "Eminem - You dont know", u: "https://www.dropbox.com/scl/fi/4y0lc0fi24e9yavn17psv/Eminem-you-dont-know.mp3.mp3?rlkey=zicb6spgqe3pv0gqnz3xc24zo&st=wy1w0icm&raw=1" },
+        { n: "The Sound of Silence", u: "https://www.dropbox.com/scl/fi/2y9zhx5zjsdxg3zljc2f9/sound-of-silence.mp3.mp3?rlkey=88zg0td3loy40uxmcm9rnk1jt&st=qty8093e&raw=1" },
+        { n: "Desireless - Voyage Voyage", u: "https://www.dropbox.com/scl/fi/cqqhzkv1ll1p09z7qgylp/Desireless-voyage-voyage.mp3.mp3?rlkey=hscvkehw7n7vvgi2im4rwhom7&st=2ldonj76&raw=1" }
+    ];
+    let curr = 0;
+    const aud = document.getElementById('player-core');
+    const tit = document.getElementById('track-title');
+
+    function loadM(i) {
+        aud.src = playlist[i].u;
+        tit.innerText = "Reproduciendo: " + playlist[i].n;
+        aud.play();
+    }
+    aud.onended = () => { curr = (curr + 1) % playlist.length; loadM(curr); };
+    function setV(v) { aud.volume = v; }
+    function toggleMusic() {
+        const s = document.getElementById('player-section');
+        if(s.style.display === "block") { s.style.display = "none"; }
+        else { s.style.display = "block"; if(!aud.src) loadM(0); }
+    }
+
+    function sAlert() {
+        const a = document.getElementById('sec-msg');
+        a.classList.add('show-sec');
+        setTimeout(() => a.classList.remove('show-sec'), 2000);
+    }
+    document.addEventListener('contextmenu', e => { e.preventDefault(); sAlert(); });
+    document.addEventListener('keydown', e => {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
+            e.preventDefault(); sAlert();
+        }
+    });
+    document.addEventListener('selectstart', e => e.preventDefault());
+    document.addEventListener('dragstart', e => e.preventDefault());
+</script>
